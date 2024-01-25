@@ -1,17 +1,6 @@
 ---
-# - name: Build our own
-#   ansible.builtin.include_tasks: from_source.yml
-#   when: de_slapd__version is defined
-
-- name: Use dist-package or build our own?
-  ansible.builtin.include_tasks:
-    file: "{{ (de_slapd__version == 'dist') | \
-      ternary('{{ ansible_os_family }}', 'from_source') }}.yml"
-    # file: "{{ (de_slapd__version | default('undef', true) == 'undef') | \
-    #   ternary('{{ ansible_os_family }}', 'from_source') }}.yml"
-      # ternary('main_old', 'from_source') }}.yml"
-
-############################# try old main-config #############################
+# - name: Install packages
+#   ansible.builtin.include_tasks: "{{ ansible_os_family }}.yml"
 
 - name: Check slapd is running
   ansible.builtin.shell: >-
@@ -66,5 +55,3 @@
 
 - name: Create entities
   ansible.builtin.include_tasks: entities.yml
-  tags:
-    - entities

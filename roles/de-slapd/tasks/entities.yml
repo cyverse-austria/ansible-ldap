@@ -6,6 +6,18 @@
     attributes:
       dc: "{{ dn_suffix.split(',')[0].split('=')[1] }}"
     bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "123"
+    state: "present"
+  tags:
+    - entities
+
+- name: "Create the Base Domain"
+  community.general.ldap_entry:
+    dn: "{{ dn_suffix }}"
+    objectClass: "domain"
+    attributes:
+      dc: "{{ dn_suffix.split(',')[0].split('=')[1] }}"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
     bind_pw: "{{ root_password }}"
     state: "present"
 

@@ -1,0 +1,119 @@
+---
+- name: Get source package for OpenLDAP ver. {{ de_slapd__version }}
+  ansible.builtin.get_url:
+    # url: "{{ item }}"
+    url: "https://www.openldap.org/software/download/OpenLDAP/openldap-release/\
+      openldap-{{ de_slapd__version }}.tgz"
+    dest: /root/
+    mode: "0644"
+  # with_items:
+    # - "https://www.openldap.org/software/download/OpenLDAP/openldap-release/\
+    #   openldap-{{ de_slapd__version }}.tgz"
+    # - "https://launchpad.net/debian/+archive/primary/+sourcefiles/openldap/\
+    #   2.4.44+dfsg-8/openldap_2.4.44+dfsg-8.dsc"
+    # - "https://launchpad.net/debian/+archive/primary/+sourcefiles/openldap/\
+    #   2.4.44+dfsg-8/openldap_2.4.44+dfsg.orig.tar.gz"
+    # - "https://launchpad.net/debian/+archive/primary/+sourcefiles/openldap/\
+    #   2.4.44+dfsg-8/openldap_2.4.44+dfsg-8.debian.tar.xz"
+
+# - name: Get the source for OpenLDAP ver. {{ de_slapd__version }}
+- name: Unpack the source for OpenLDAP ver. {{ de_slapd__version }}
+  ansible.builtin.unarchive:
+    # src: "https://www.openldap.org/software/download/OpenLDAP/openldap-release/\
+      # openldap-{{ de_slapd__version }}.tgz"
+    src: /root/openldap-{{ de_slapd__version }}.tgz
+    dest: /root/
+    remote_src: true
+
+- name: Some needed packages
+  ansible.builtin.apt:
+    name:
+      - gcc
+      - make
+      # - libperl5.36 # ???
+      - libperl-dev
+      - libtool
+      - libgnutls28-dev
+      - libdb5.3-dev
+      - libwrap0-dev
+      - unixodbc-dev
+      - libsasl2-dev
+      - python3-ldap
+    update_cache: true
+
+- name: Run configure
+  ansible.builtin.command:
+    argv:
+      - ./configure
+      - --prefix=/usr
+      - --sysconfdir=/etc
+      - --disable-static
+      - --enable-debug
+      - --with-tls=gnutls
+      - --with-cyrus-sasl
+      - --enable-dynamic
+      - --enable-crypt
+      - --enable-spasswd
+      - --enable-slapd
+      - --enable-modules
+      - --enable-rlookups
+      - --enable-backends=mod
+      - --disable-sql
+      - --enable-ppolicy=mod
+      - --enable-syslog
+      - --enable-overlays=mod
+      - --disable-ndb
+      - --enable-monitor
+      - --with-subdir=ldap
+      - --enable-mdb
+  args:
+    chdir: /root/openldap-{{ de_slapd__version }}
+    creates: Makefile
+
+- name: Run make depend
+  community.general.make:
+    chdir: /root/openldap-{{ de_slapd__version }}
+    target: depend
+
+- name: Run make
+  community.general.make:
+    chdir: /root/openldap-{{ de_slapd__version }}
+
+- name: Run make install
+  community.general.make:
+    chdir: /root/openldap-{{ de_slapd__version }}
+    target: install
+
+# ./configure --prefix=/usr --sysconfdir=/etc --disable-static --enable-debug --with-tls=gnutls --with-cyrus-sasl --enable-dynamic --enable-crypt --enable-spasswd --enable-slapd --enable-modules --enable-rlookups --enable-backends=mod --disable-sql --enable-ppolicy=mod --enable-syslog --enable-overlays=mod --disable-ndb
+
+# compile options:
+  # --prefix=/usr --libexecdir=/usr/lib --sysconfdir=/etc --localstatedir=/var --mandir=/usr/share/man --enable-debug --enable-dynamic --enable-syslog --enable-proctitle --enable-ipv6 --enable-local --enable-slapd --enable-dynacl --enable-aci --enable-cleartext --enable-crypt --disable-lmpasswd --enable-spasswd --enable-modules --enable-rewrite --enable-rlookups --enable-slapi --disable-slp --enable-wrappers --enable-backends=mod --disable-ndb --enable-overlays=mod --with-subdir=ldap --with-cyrus-sasl --with-threads --with-tls=gnutls --with-odbc=unixodbc
+# --enable-bdb
+# --enable-mdb
+
+- name: Create openldap-user
+  ansible.builtin.user:
+    name: openldap
+    system: true
+    create_home: true
+    home: /var/lib/ldap
+    shell: /usr/sbin/nologin
+
+- name: Create data-dir
+  ansible.builtin.file:
+    path: /var/run/ldap
+    # path: /var/lib/ldap
+    state: directory
+    owner: openldap
+    group: openldap
+    mode: "0755"
+
+- name: Create systemd-start-script
+  ansible.builtin.copy:
+    src: usr/lib/systemd/system/slapd.service
+    dest: /usr/lib/systemd/system/slapd.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Daemon reload
