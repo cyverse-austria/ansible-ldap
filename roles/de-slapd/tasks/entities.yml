@@ -5,21 +5,15 @@
     objectClass: "domain"
     attributes:
       dc: "{{ dn_suffix.split(',')[0].split('=')[1] }}"
-    bind_dn: "cn=Manager,{{ dn_suffix }}"
-    bind_pw: "123"
-    state: "present"
-  tags:
-    - entities
-
-- name: "Create the Base Domain"
-  community.general.ldap_entry:
-    dn: "{{ dn_suffix }}"
-    objectClass: "domain"
-    attributes:
-      dc: "{{ dn_suffix.split(',')[0].split('=')[1] }}"
+      # objectClass:
+      #   - "domain"
     bind_dn: "cn=Manager,{{ dn_suffix }}"
     bind_pw: "{{ root_password }}"
+    # bind_pw: "123"
     state: "present"
+    validate_certs: false
+  tags:
+    - entities
 
 - name: "Organizational Unit: People"
   community.general.ldap_entry:
@@ -27,9 +21,13 @@
     objectClass: "organizationalUnit"
     attributes:
       ou: "People"
-    bind_dn: "cn=Manager,{{ dn_suffix }}"
-    bind_pw: "{{ root_password }}"
+    # bind_dn: "cn=Manager,{{ dn_suffix }}"
+    # bind_pw: "{{ root_password }}"
+    bind_dn: "cn=Manager,dc=tugraz,dc=at"
+    bind_pw: "123"
     state: "present"
+  # tags:
+  #   - entities
 
 - name: "Organizational Unit: Groups"
   community.general.ldap_entry:

@@ -1,0 +1,16 @@
+dn: dc=tugraz,dc=at
+objectClass: dcObject
+objectClass: organization
+objectClass: top
+o: TUGraz
+dc: tugraz
+
+dn: ou=groups,dc=tugraz,dc=at
+objectClass: organizationalUnit
+objectClass: top
+ou: groups
+
+dn: ou=people,dc=tugraz,dc=at
+objectClass: organizationalUnit
+objectClass: top
+ou: people

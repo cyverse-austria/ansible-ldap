@@ -1,0 +1,6 @@
+dn: cn=Manager,dc=tugraz,dc=at
+cn: Manager
+objectClass: organizationalRole
+objectClass: simpleSecurityObject
+objectClass: top
+userPassword: {SSHA}stUoiH9zDtOnX8P/nbr459zOtB9w2HQU

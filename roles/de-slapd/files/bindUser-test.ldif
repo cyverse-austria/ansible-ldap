@@ -1,0 +1,12 @@
+# dn: ou=system,dc=tugraz,dc=at
+# objectClass: organizationalUnit
+# objectClass: top
+# ou: system
+
+# dn: cn=Manager,ou=system,dc=tugraz,dc=at
+dn: cn=Manager,dc=tugraz,dc=at
+objectClass: organizationalRole
+objectClass: simpleSecurityObject
+cn: Manager
+userPassword: {SSHA}rApSjVkMxIPwh+LsGg1Gb1iG3C0qVIyf
+description: Bind DN user for LDAP Operations

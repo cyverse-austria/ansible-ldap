@@ -1,0 +1,102 @@
+# include: file:///etc/ldap/schema/core.ldif
+# include: file:///etc/ldap/schema/cosine.ldif
+# include: file:///etc/ldap/schema/nis.ldif
+# include: file:///etc/ldap/schema/inetorgperson.ldif
+# # include: file:///etc/ldap/schema/sudo.ldif
+# # include: file:///etc/openldap/schema/ppolicy.ldif
+
+dn: cn=config
+objectClass: olcGlobal
+cn: config
+olcConfigDir: slapd.d
+olcAllows: bind_v2
+olcAttributeOptions: lang-
+olcAuthzPolicy: none
+olcConcurrency: 0
+olcConnMaxPending: 100
+olcConnMaxPendingAuth: 1000
+olcGentleHUP: FALSE
+olcIdleTimeout: 120
+olcIndexSubstrIfMaxLen: 4
+olcIndexSubstrIfMinLen: 2
+olcIndexSubstrAnyLen: 4
+olcIndexSubstrAnyStep: 2
+olcIndexIntLen: 4
+olcListenerThreads: 1
+olcLocalSSF: 71
+olcLogFile: /var/log/ldap/ldap.log
+olcLogLevel: Packets
+olcLogLevel: Args
+olcLogLevel: Stats
+olcPidFile: /run/ldap/slapd.pid
+olcReadOnly: FALSE
+olcReverseLookup: FALSE
+olcSaslSecProps: noplain,noanonymous
+olcSizeLimit: unlimited
+olcSockbufMaxIncoming: 262143
+olcSockbufMaxIncomingAuth: 16777215
+olcThreads: 16
+olcTLSVerifyClient: never
+olcTLSProtocolMin: 0.0
+olcToolThreads: 1
+olcWriteTimeout: 0
+structuralObjectClass: olcGlobal
+
+dn: cn=schema,cn=config
+objectClass: olcSchemaConfig
+cn: schema
+
+dn: cn=module,cn=config
+objectClass: olcModuleList
+cn: module
+olcModulepath: /usr/libexec/ldap
+olcModuleload: back_mdb.so
+olcModuleload: ppolicy.so
+
+include: file:///etc/ldap/schema/core.ldif
+include: file:///etc/ldap/schema/cosine.ldif
+include: file:///etc/ldap/schema/nis.ldif
+include: file:///etc/ldap/schema/inetorgperson.ldif
+# include: file:///etc/ldap/schema/sudo.ldif
+# include: file:///etc/openldap/schema/ppolicy.ldif
+
+dn: olcDatabase=frontend,cn=config
+objectClass: olcDatabaseConfig
+objectClass: olcFrontendConfig
+olcDatabase: frontend
+olcAddContentAcl: FALSE
+olcLastMod: TRUE
+# olcLastBind: FALSE
+olcMaxDerefDepth: 0
+olcReadOnly: FALSE
+olcAccess: to dn.base="cn=Subschema" by * read
+olcAccess: to * 
+  by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage 
+  by * none
+
+dn: olcDatabase=config,cn=config
+objectClass: olcDatabaseConfig
+olcDatabase: config
+olcAddContentAcl: TRUE
+olcLastMod: TRUE
+# olcLastBind: FALSE
+olcMaxDerefDepth: 15
+olcReadOnly: FALSE
+olcSyncUseSubentry: FALSE
+olcMonitoring: FALSE
+olcRootDN: cn=config
+olcRootPW: {SSHA}1mY6n/QEaSYXvqpFjVX3bUvAwHzl5Pux
+olcAccess: to * 
+  by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage 
+  by * none
+
+# dn: cn=schema,cn=config
+# objectClass: olcSchemaConfig
+# cn: schema
+# 
+# include: file:///etc/ldap/schema/core.ldif
+# include: file:///etc/ldap/schema/cosine.ldif
+# include: file:///etc/ldap/schema/nis.ldif
+# include: file:///etc/ldap/schema/inetorgperson.ldif
+# # include: file:///etc/ldap/schema/sudo.ldif
+# # include: file:///etc/openldap/schema/ppolicy.ldif

@@ -1,0 +1,22 @@
+dn: dc=tugraz,dc=at
+dc: tugraz
+objectClass: domain
+# modifiersName: cn=Manager,dc=tugraz,dc=at
+
+# dn: ou=system,dc=tugraz,dc=at
+# objectClass: organizationalUnit
+# objectClass: top
+# ou: system
+
+dn: cn=Manager,dc=tugraz,dc=at
+objectClass: organizationalRole
+objectClass: simpleSecurityObject
+cn: Manager
+userPassword: {SSHA}9TYWA5TfsYnypYZJZjPfeqCnM6URJPsT
+description: Bind DN user for LDAP Operations
+
+# dn: cn=config# 
+# changetype: modify
+# replace: olcSuffix
+# olcSuffix: dc=tugraz,dc=at
+# olcRootPW: {SSHA}/jiFVncPfwVk7P6ArJxoKY88nq34Aojk

@@ -44,6 +44,10 @@
   tags:
     - installation
 
+- name: Encode password
+  ansible.builtin.set_fact:
+    _de_slapd__encoded_pw: "{{ slappasswd.stdout | b64encode }}"
+
 # TODO: change to new configuration-format
 - name: "Generate the OpenLDAP Configuration File"
   ansible.builtin.template:
@@ -52,10 +56,73 @@
     owner: root
     mode: "0644"
 
-- name: "Delete the OpenLDAP Configuration Directory"
+# - name: Create config-dir backup
+#   ansible.builtin.command:
+#     cmd: mv slapd.d slapd.d.bak
+#   args:
+#     chdir: /etc/ldap
+#     creates: slapd.d.bak
+
+- name: Create config-dir
   ansible.builtin.file:
-    path: "/etc/ldap/slapd.d"
-    state: absent
+    path: /etc/ldap/slapd.d
+    state: directory
+    owner: openldap
+    group: openldap
+    mode: "0755"
+
+# - name: DEBUG01
+#   ansible.builtin.debug:
+#     var: de_slapd__version
+
+# - name: DEBUG02
+#   ansible.builtin.debug:
+#     var: _de_slapd__encoded_pw
+
+- name: Only for installations from distribution
+  when:
+    - de_slapd__version == "dist"
+  block:
+    - name: Create config-dir entries
+      ansible.builtin.shell: |
+        slaptest -f slapd.conf -F slapd.d -Q
+        chown -R openldap:openldap slapd.d
+      args:
+        chdir: /etc/ldap
+        creates: slapd.d/cn=config.ldif
+
+    # - name: Replace RootDN
+    #   ansible.builtin.lineinfile:
+    #     path: /etc/ldap/slapd.d/cn=config/olcDatabase={1}mdb.ldif
+    #     regexp: '^(olcRootPW::) .*$'
+    #     line: '\1 {{ _de_slapd__encoded_pw }}'
+    #     backrefs: true
+
+    - name: Recursively change ownership of a directory
+      ansible.builtin.file:
+        path: /etc/ldap/slapd.d
+        state: directory
+        recurse: true
+        owner: openldap
+        group: openldap
+
+- name: TODO copy some ldif-files
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/root/"
+    owner: root
+    group: root
+    mode: "0644"
+  with_fileglob:
+    - "*.ldif"
+    - "todo.md"
+  when:
+    - de_slapd__version != "dist"
+
+# - name: "Delete the OpenLDAP Configuration Directory"
+#   ansible.builtin.file:
+#     path: "/etc/ldap/slapd.d"
+#     state: absent
 
 - name: "Start the OpenLDAP Server"
   ansible.builtin.systemd:
