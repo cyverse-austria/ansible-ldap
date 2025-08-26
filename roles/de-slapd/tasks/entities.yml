@@ -294,6 +294,13 @@
     bind_pw: "{{ root_password }}"
     state: "present"
 
+- name: "Set the damapuser password"
+  community.general.ldap_passwd:
+    dn: "uid=damapuser,ou=People,{{ dn_suffix }}"
+    passwd: "notprod"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+
 - name: "Add damapuser to the 'damap_admins' Group"
   community.general.ldap_attrs:
     dn: "cn=damap_admins,ou=Groups,{{ dn_suffix }}"
@@ -323,6 +330,13 @@
     bind_pw: "{{ root_password }}"
     state: "present"
 
+- name: "Set the inveniouser password"
+  community.general.ldap_passwd:
+    dn: "uid=inveniouser,ou=People,{{ dn_suffix }}"
+    passwd: "notprod"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+
 - name: "Add inveniouser to the 'invenio_admins' Group"
   community.general.ldap_attrs:
     dn: "cn=damap_admins,ou=Groups,{{ dn_suffix }}"
@@ -351,6 +365,13 @@
     bind_dn: "cn=Manager,{{ dn_suffix }}"
     bind_pw: "{{ root_password }}"
     state: "present"
+
+- name: "Set the combineduser password"
+  community.general.ldap_passwd:
+    dn: "uid=combineduser,ou=People,{{ dn_suffix }}"
+    passwd: "notprod"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
 
 - name: "Add combineduser to the 'invenio_admins' Group"
   community.general.ldap_attrs:
