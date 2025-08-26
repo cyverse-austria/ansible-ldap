@@ -339,7 +339,7 @@
 
 - name: "Add inveniouser to the 'invenio_admins' Group"
   community.general.ldap_attrs:
-    dn: "cn=damap_admins,ou=Groups,{{ dn_suffix }}"
+    dn: "cn=invenio_admins,ou=Groups,{{ dn_suffix }}"
     attributes:
       memberUid: "inveniouser"
     bind_dn: "cn=Manager,{{ dn_suffix }}"
@@ -384,7 +384,7 @@
 
 - name: "Add combineduser to the 'damap_admins' Group"
   community.general.ldap_attrs:
-    dn: "cn=damap_admins,ou=Groups,{{ dn_suffix }}"
+    dn: "cn=invenio_admins,ou=Groups,{{ dn_suffix }}"
     attributes:
       memberUid: "combineduser"
     bind_dn: "cn=Manager,{{ dn_suffix }}"
