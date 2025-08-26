@@ -62,6 +62,40 @@
     bind_pw: "{{ root_password }}"
     state: "present"
 
+
+- name: "Group: damap_admins"
+  community.general.ldap_entry:
+    dn: "cn=damap_admins,ou=Groups,{{ dn_suffix }}"
+    objectClass: "posixGroup"
+    attributes:
+      description: "All damap_admins users"
+      gidNumber: "100100"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+- name: "Group: invenio_admins"
+  community.general.ldap_entry:
+    dn: "cn=invenio_admins,ou=Groups,{{ dn_suffix }}"
+    objectClass: "posixGroup"
+    attributes:
+      description: "All invenio_admins users"
+      gidNumber: "100200"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+- name: "Group: rdm_admins"
+  community.general.ldap_entry:
+    dn: "cn=rdm_admins,ou=Groups,{{ dn_suffix }}"
+    objectClass: "posixGroup"
+    attributes:
+      description: "All rdm_admins users"
+      gidNumber: "100300"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+  
 - name: "User: de_grouper"
   community.general.ldap_entry:
     dn: "uid=de_grouper,ou=People,{{ dn_suffix }}"
