@@ -312,7 +312,7 @@
 
 - name: "User: inveniouser"
   community.general.ldap_entry:
-    dn: "uid=damapuser,ou=People,{{ dn_suffix }}"
+    dn: "uid=inveniouser,ou=People,{{ dn_suffix }}"
     objectClass: "inetOrgPerson,posixAccount,shadowAccount"
     attributes:
       uid: "inveniouser"
