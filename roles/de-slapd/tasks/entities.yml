@@ -260,6 +260,13 @@
     bind_pw: "{{ root_password }}"
     state: "present"
 
+- name: "Set the anonymous password"
+  community.general.ldap_passwd:
+    dn: "uid=anonymous,ou=People,{{ dn_suffix }}"
+    passwd: "notprod"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+
 - name: "Add anonymous to the 'everyone' Group"
   community.general.ldap_attrs:
     dn: "cn=everyone,ou=Groups,{{ dn_suffix }}"
