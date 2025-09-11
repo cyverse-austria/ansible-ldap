@@ -426,47 +426,47 @@
 
 #######################
 
-- name: "User: clusteradmin"
+- name: "User: clusteradmin01"
   community.general.ldap_entry:
-    dn: "uid=clusteradmin,ou=People,{{ dn_suffix }}"
+    dn: "uid=clusteradmin01,ou=People,{{ dn_suffix }}"
     objectClass: "inetOrgPerson,posixAccount,shadowAccount"
     attributes:
-      uid: "clusteradmin"
-      mail: "clusteradmin@example.org" # todo: get domain name
+      uid: "clusteradmin01"
+      mail: "clusteradmin01@example.org" # todo: get domain name
       sn: "Access"
-      givenName: "clusteradmins-cluster_admins"
-      cn: "clusteradmin-cluster_admins Access"
+      givenName: "clusteradmin01-cluster_admins"
+      cn: "clusteradmin01-cluster_admins Access"
       title: "Other"
       o: "N/A" #TODO: ORG e.g. Graz University of technology
       departmentNumber: "N/A"
       uidNumber: "40044"
       gidNumber: "10048"
-      homeDirectory: "/home/clusteradmin"
+      homeDirectory: "/home/clusteradmin01"
     bind_dn: "cn=Manager,{{ dn_suffix }}"
     bind_pw: "{{ root_password }}"
     state: "present"
 
-- name: "Set the clusteradmin password"
+- name: "Set the clusteradmin01 password"
   community.general.ldap_passwd:
-    dn: "uid=clusteradmin,ou=People,{{ dn_suffix }}"
+    dn: "uid=clusteradmin01,ou=People,{{ dn_suffix }}"
     passwd: "notprod"
     bind_dn: "cn=Manager,{{ dn_suffix }}"
     bind_pw: "{{ root_password }}"
 
-- name: "Add clusteradmin to the 'cluster_admins' Group"
+- name: "Add clusteradmin01 to the 'cluster_admins' Group"
   community.general.ldap_attrs:
     dn: "cn=cluster_admins,ou=Groups,{{ dn_suffix }}"
     attributes:
-      memberUid: "clusteradmin"
+      memberUid: "clusteradmin01"
     bind_dn: "cn=Manager,{{ dn_suffix }}"
     bind_pw: "{{ root_password }}"
     state: "present"
 
-- name: "Add clusteradmin to the 'everyone' Group"
+- name: "Add clusteradmin01 to the 'everyone' Group"
   community.general.ldap_attrs:
     dn: "cn=everyone,ou=Groups,{{ dn_suffix }}"
     attributes:
-      memberUid: "clusteradmin"
+      memberUid: "clusteradmin01"
     bind_dn: "cn=Manager,{{ dn_suffix }}"
     bind_pw: "{{ root_password }}"
     state: "present"
