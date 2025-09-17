@@ -94,7 +94,18 @@
     bind_dn: "cn=Manager,{{ dn_suffix }}"
     bind_pw: "{{ root_password }}"
     state: "present"
-  
+
+- name: "Group: sys_admins"
+  community.general.ldap_entry:
+    dn: "cn=sys_admins,ou=Groups,{{ dn_suffix }}"
+    objectClass: "posixGroup"
+    attributes:
+      description: "System administrators"
+      gidNumber: "100400"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
 - name: "User: de_grouper"
   community.general.ldap_entry:
     dn: "uid=de_grouper,ou=People,{{ dn_suffix }}"
@@ -467,6 +478,52 @@
     dn: "cn=everyone,ou=Groups,{{ dn_suffix }}"
     attributes:
       memberUid: "clusteradmin01"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+#######################
+- name: "User: sysadmin"
+  community.general.ldap_entry:
+    dn: "uid=sysadmin,ou=People,{{ dn_suffix }}"
+    objectClass: "inetOrgPerson,posixAccount,shadowAccount"
+    attributes:
+      uid: "sysadmin"
+      mail: "sysadmin@example.org" # todo: get domain name
+      sn: "Access"
+      givenName: "sysadmin-admin"
+      cn: "sysadmin-admins Access"
+      title: "Other"
+      o: "N/A" #TODO: ORG e.g. Graz University of technology
+      departmentNumber: "N/A"
+      uidNumber: "40054"
+      gidNumber: "10058"
+      homeDirectory: "/home/sysadmin"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+- name: "Set the sysadmin password"
+  community.general.ldap_passwd:
+    dn: "uid=sysadmin,ou=People,{{ dn_suffix }}"
+    passwd: "notprod"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+
+- name: "Add sysadmin to the 'sys_admins' Group"
+  community.general.ldap_attrs:
+    dn: "cn=sys_admins,ou=Groups,{{ dn_suffix }}"
+    attributes:
+      memberUid: "sysadmin"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+- name: "Add sysadmin to the 'everyone' Group"
+  community.general.ldap_attrs:
+    dn: "cn=everyone,ou=Groups,{{ dn_suffix }}"
+    attributes:
+      memberUid: "sysadmin"
     bind_dn: "cn=Manager,{{ dn_suffix }}"
     bind_pw: "{{ root_password }}"
     state: "present"
