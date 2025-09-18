@@ -95,13 +95,13 @@
     bind_pw: "{{ root_password }}"
     state: "present"
 
-- name: "Group: sys_admins"
+- name: "Group: project_admins"
   community.general.ldap_entry:
-    dn: "cn=sys_admins,ou=Groups,{{ dn_suffix }}"
+    dn: "cn=project_admins,ou=Groups,{{ dn_suffix }}"
     objectClass: "posixGroup"
     attributes:
-      description: "System administrators"
-      gidNumber: "100400"
+      description: "Project administrators"
+      gidNumber: "100500"
     bind_dn: "cn=Manager,{{ dn_suffix }}"
     bind_pw: "{{ root_password }}"
     state: "present"
@@ -483,47 +483,47 @@
     state: "present"
 
 #######################
-- name: "User: sysadmin"
+- name: "User: projectadmin"
   community.general.ldap_entry:
-    dn: "uid=sysadmin,ou=People,{{ dn_suffix }}"
+    dn: "uid=projectadmin,ou=People,{{ dn_suffix }}"
     objectClass: "inetOrgPerson,posixAccount,shadowAccount"
     attributes:
-      uid: "sysadmin"
-      mail: "sysadmin@example.org" # todo: get domain name
+      uid: "projectadmin"
+      mail: "projectadmin@example.org" # todo: get domain name
       sn: "Access"
-      givenName: "sysadmin-admin"
-      cn: "sysadmin-admins Access"
+      givenName: "projectadmin-admin"
+      cn: "projectadmin-project Access"
       title: "Other"
       o: "N/A" #TODO: ORG e.g. Graz University of technology
       departmentNumber: "N/A"
-      uidNumber: "40054"
-      gidNumber: "10058"
-      homeDirectory: "/home/sysadmin"
+      uidNumber: "40064"
+      gidNumber: "10068"
+      homeDirectory: "/home/projectadmin"
     bind_dn: "cn=Manager,{{ dn_suffix }}"
     bind_pw: "{{ root_password }}"
     state: "present"
 
-- name: "Set the sysadmin password"
+- name: "Set the projectadmin password"
   community.general.ldap_passwd:
-    dn: "uid=sysadmin,ou=People,{{ dn_suffix }}"
+    dn: "uid=projectadmin,ou=People,{{ dn_suffix }}"
     passwd: "notprod"
     bind_dn: "cn=Manager,{{ dn_suffix }}"
     bind_pw: "{{ root_password }}"
 
-- name: "Add sysadmin to the 'sys_admins' Group"
+- name: "Add projectadmin to the 'project_admins' Group"
   community.general.ldap_attrs:
-    dn: "cn=sys_admins,ou=Groups,{{ dn_suffix }}"
+    dn: "cn=project_admins,ou=Groups,{{ dn_suffix }}"
     attributes:
-      memberUid: "sysadmin"
+      memberUid: "projectadmin"
     bind_dn: "cn=Manager,{{ dn_suffix }}"
     bind_pw: "{{ root_password }}"
     state: "present"
 
-- name: "Add sysadmin to the 'everyone' Group"
+- name: "Add projectadmin to the 'everyone' Group"
   community.general.ldap_attrs:
     dn: "cn=everyone,ou=Groups,{{ dn_suffix }}"
     attributes:
-      memberUid: "sysadmin"
+      memberUid: "projectadmin"
     bind_dn: "cn=Manager,{{ dn_suffix }}"
     bind_pw: "{{ root_password }}"
     state: "present"
