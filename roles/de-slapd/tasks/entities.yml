@@ -62,6 +62,50 @@
     bind_pw: "{{ root_password }}"
     state: "present"
 
+- name: "Group: damap_admins"
+  community.general.ldap_entry:
+    dn: "cn=damap_admins,ou=Groups,{{ dn_suffix }}"
+    objectClass: "posixGroup"
+    attributes:
+      description: "All damap_admins users"
+      gidNumber: "100100"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+- name: "Group: invenio_admins"
+  community.general.ldap_entry:
+    dn: "cn=invenio_admins,ou=Groups,{{ dn_suffix }}"
+    objectClass: "posixGroup"
+    attributes:
+      description: "All invenio_admins users"
+      gidNumber: "100200"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+- name: "Group: cluster_admins"
+  community.general.ldap_entry:
+    dn: "cn=cluster_admins,ou=Groups,{{ dn_suffix }}"
+    objectClass: "posixGroup"
+    attributes:
+      description: "All cluster_admins users"
+      gidNumber: "100300"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+- name: "Group: project_admins"
+  community.general.ldap_entry:
+    dn: "cn=project_admins,ou=Groups,{{ dn_suffix }}"
+    objectClass: "posixGroup"
+    attributes:
+      description: "Project administrators"
+      gidNumber: "100500"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
 - name: "User: de_grouper"
   community.general.ldap_entry:
     dn: "uid=de_grouper,ou=People,{{ dn_suffix }}"
@@ -226,11 +270,260 @@
     bind_pw: "{{ root_password }}"
     state: "present"
 
+- name: "Set the anonymous password"
+  community.general.ldap_passwd:
+    dn: "uid=anonymous,ou=People,{{ dn_suffix }}"
+    passwd: "notprod"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+
 - name: "Add anonymous to the 'everyone' Group"
   community.general.ldap_attrs:
     dn: "cn=everyone,ou=Groups,{{ dn_suffix }}"
     attributes:
       memberUid: "anonymous"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+
+##################
+# Testing
+# Todo: Remove
+#################
+- name: "User: damapuser"
+  community.general.ldap_entry:
+    dn: "uid=damapuser,ou=People,{{ dn_suffix }}"
+    objectClass: "inetOrgPerson,posixAccount,shadowAccount"
+    attributes:
+      uid: "damapuser"
+      mail: "damapuser@example.org" # todo: get domain name
+      sn: "Access"
+      givenName: "damapuser-damapgroup"
+      cn: "damapuser-damapgroup Access"
+      title: "Other"
+      o: "N/A" #TODO: ORG e.g. Graz University of technology
+      departmentNumber: "N/A"
+      uidNumber: "40014"
+      gidNumber: "10018"
+      homeDirectory: "/home/damapuser"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+- name: "Set the damapuser password"
+  community.general.ldap_passwd:
+    dn: "uid=damapuser,ou=People,{{ dn_suffix }}"
+    passwd: "notprod"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+
+- name: "Add damapuser to the 'damap_admins' Group"
+  community.general.ldap_attrs:
+    dn: "cn=damap_admins,ou=Groups,{{ dn_suffix }}"
+    attributes:
+      memberUid: "damapuser"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+- name: "User: inveniouser"
+  community.general.ldap_entry:
+    dn: "uid=inveniouser,ou=People,{{ dn_suffix }}"
+    objectClass: "inetOrgPerson,posixAccount,shadowAccount"
+    attributes:
+      uid: "inveniouser"
+      mail: "inveniouser@example.org" # todo: get domain name
+      sn: "Access"
+      givenName: "inveniouser-damapgroup"
+      cn: "inveniouser-damapgroup Access"
+      title: "Other"
+      o: "N/A" #TODO: ORG e.g. Graz University of technology
+      departmentNumber: "N/A"
+      uidNumber: "40024"
+      gidNumber: "10028"
+      homeDirectory: "/home/inveniouser"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+- name: "Set the inveniouser password"
+  community.general.ldap_passwd:
+    dn: "uid=inveniouser,ou=People,{{ dn_suffix }}"
+    passwd: "notprod"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+
+- name: "Add inveniouser to the 'invenio_admins' Group"
+  community.general.ldap_attrs:
+    dn: "cn=invenio_admins,ou=Groups,{{ dn_suffix }}"
+    attributes:
+      memberUid: "inveniouser"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+- name: "User: combineduser"
+  community.general.ldap_entry:
+    dn: "uid=combineduser,ou=People,{{ dn_suffix }}"
+    objectClass: "inetOrgPerson,posixAccount,shadowAccount"
+    attributes:
+      uid: "combineduser"
+      mail: "combineduser@example.org" # todo: get domain name
+      sn: "Access"
+      givenName: "combineduser-damap-invenio-group"
+      cn: "combineduser-damap-invenio-group Access"
+      title: "Other"
+      o: "N/A" #TODO: ORG e.g. Graz University of technology
+      departmentNumber: "N/A"
+      uidNumber: "40034"
+      gidNumber: "10038"
+      homeDirectory: "/home/combineduser"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+- name: "Set the combineduser password"
+  community.general.ldap_passwd:
+    dn: "uid=combineduser,ou=People,{{ dn_suffix }}"
+    passwd: "notprod"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+
+- name: "Add combineduser to the 'invenio_admins' Group"
+  community.general.ldap_attrs:
+    dn: "cn=damap_admins,ou=Groups,{{ dn_suffix }}"
+    attributes:
+      memberUid: "combineduser"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+- name: "Add combineduser to the 'damap_admins' Group"
+  community.general.ldap_attrs:
+    dn: "cn=invenio_admins,ou=Groups,{{ dn_suffix }}"
+    attributes:
+      memberUid: "combineduser"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+- name: "Add damapuser to the 'everyone' Group"
+  community.general.ldap_attrs:
+    dn: "cn=everyone,ou=Groups,{{ dn_suffix }}"
+    attributes:
+      memberUid: "damapuser"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+- name: "Add inveniouser to the 'everyone' Group"
+  community.general.ldap_attrs:
+    dn: "cn=everyone,ou=Groups,{{ dn_suffix }}"
+    attributes:
+      memberUid: "inveniouser"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+- name: "Add combineduser to the 'everyone' Group"
+  community.general.ldap_attrs:
+    dn: "cn=everyone,ou=Groups,{{ dn_suffix }}"
+    attributes:
+      memberUid: "combineduser"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+#######################
+
+- name: "User: clusteradmin01"
+  community.general.ldap_entry:
+    dn: "uid=clusteradmin01,ou=People,{{ dn_suffix }}"
+    objectClass: "inetOrgPerson,posixAccount,shadowAccount"
+    attributes:
+      uid: "clusteradmin01"
+      mail: "clusteradmin01@example.org" # todo: get domain name
+      sn: "Access"
+      givenName: "clusteradmin01-cluster_admins"
+      cn: "clusteradmin01-cluster_admins Access"
+      title: "Other"
+      o: "N/A" #TODO: ORG e.g. Graz University of technology
+      departmentNumber: "N/A"
+      uidNumber: "40044"
+      gidNumber: "10048"
+      homeDirectory: "/home/clusteradmin01"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+- name: "Set the clusteradmin01 password"
+  community.general.ldap_passwd:
+    dn: "uid=clusteradmin01,ou=People,{{ dn_suffix }}"
+    passwd: "notprod"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+
+- name: "Add clusteradmin01 to the 'cluster_admins' Group"
+  community.general.ldap_attrs:
+    dn: "cn=cluster_admins,ou=Groups,{{ dn_suffix }}"
+    attributes:
+      memberUid: "clusteradmin01"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+- name: "Add clusteradmin01 to the 'everyone' Group"
+  community.general.ldap_attrs:
+    dn: "cn=everyone,ou=Groups,{{ dn_suffix }}"
+    attributes:
+      memberUid: "clusteradmin01"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+#######################
+- name: "User: projectadmin"
+  community.general.ldap_entry:
+    dn: "uid=projectadmin,ou=People,{{ dn_suffix }}"
+    objectClass: "inetOrgPerson,posixAccount,shadowAccount"
+    attributes:
+      uid: "projectadmin"
+      mail: "projectadmin@example.org" # todo: get domain name
+      sn: "Access"
+      givenName: "projectadmin-admin"
+      cn: "projectadmin-project Access"
+      title: "Other"
+      o: "N/A" #TODO: ORG e.g. Graz University of technology
+      departmentNumber: "N/A"
+      uidNumber: "40064"
+      gidNumber: "10068"
+      homeDirectory: "/home/projectadmin"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+- name: "Set the projectadmin password"
+  community.general.ldap_passwd:
+    dn: "uid=projectadmin,ou=People,{{ dn_suffix }}"
+    passwd: "notprod"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+
+- name: "Add projectadmin to the 'project_admins' Group"
+  community.general.ldap_attrs:
+    dn: "cn=project_admins,ou=Groups,{{ dn_suffix }}"
+    attributes:
+      memberUid: "projectadmin"
+    bind_dn: "cn=Manager,{{ dn_suffix }}"
+    bind_pw: "{{ root_password }}"
+    state: "present"
+
+- name: "Add projectadmin to the 'everyone' Group"
+  community.general.ldap_attrs:
+    dn: "cn=everyone,ou=Groups,{{ dn_suffix }}"
+    attributes:
+      memberUid: "projectadmin"
     bind_dn: "cn=Manager,{{ dn_suffix }}"
     bind_pw: "{{ root_password }}"
     state: "present"
