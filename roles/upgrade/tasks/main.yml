@@ -1,0 +1,73 @@
+---
+- name: "Stop the OpenLDAP Server"
+  ansible.builtin.systemd:
+    name: slapd
+    daemon_reload: true
+    enabled: true
+    state: stopped
+
+- name: Backup LDAP DB
+  ansible.builtin.command: slapcat -l /tmp/ldap-backup.ldif
+  become: yes
+  args:
+    creates: /tmp/ldap-backup.ldif
+
+- name: Ensure backup exists before deleting DB
+  ansible.builtin.stat:
+    path: /tmp/ldap-backup.ldif
+  register: ldap_backup
+    
+- name: Fail if backup not found
+  ansible.builtin.fail:
+    msg: "Backup file not found. Aborting to prevent data loss."
+  when: not ldap_backup.stat.exists
+
+- name: Clear OpenLDAP DB directory
+  ansible.builtin.file:
+    path: /var/lib/ldap
+    state: absent
+  become: yes
+
+- name: Recreate OpenLDAP DB directory
+  ansible.builtin.file:
+    path: /var/lib/ldap
+    state: directory
+    owner: openldap
+    group: openldap
+    mode: "0750"
+  become: yes
+
+- name: Mask slapd to prevent auto-start during upgrade
+  ansible.builtin.systemd:
+    name: slapd
+    masked: true
+
+- name: Install specific version of OpenLDAP (slapd)
+  ansible.builtin.apt:
+    name: slapd={{ ldap_version }}
+    state: present
+    update_cache: yes
+
+- name: Unmask slapd after upgrade
+  ansible.builtin.systemd:
+    name: slapd
+    masked: false
+
+- name: Import backed-up LDAP data
+  ansible.builtin.command: slapadd -l /tmp/ldap-backup.ldif
+  become: yes
+
+- name: Ensure LDAP DB ownership
+  file:
+    path: /var/lib/ldap
+    owner: openldap
+    group: openldap
+    mode: "0750"
+    recurse: yes
+
+- name: "Start the OpenLDAP Server"
+  ansible.builtin.systemd:
+    name: slapd
+    daemon_reload: true
+    enabled: true
+    state: restarted
